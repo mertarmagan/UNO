@@ -5,6 +5,7 @@ from uno.deck.card_types.color import Color
 from uno.deck.card_types.special import Special
 from uno.deck.card_types.number import Number
 from uno.deck.card_types.wild import Wild
+from random import randint
 
 
 def init():
@@ -13,17 +14,24 @@ def init():
     init_color_card(card_deck)
     init_wild_card(card_deck)
 
+    print_deck(card_deck)
+
     return card_deck
+
+
+def draw_card(deck):
+    rand_card = randint(0, len(deck)-1)
+    return deck.pop(rand_card)
 
 
 def print_deck(card_deck):
     for c in card_deck:
         if isinstance(c, SpecialCard):
-            print('Special Card - typ:', c.type, ' col:', c.color)
+            print('Special Card - typ:', c.type, 'col:', c.color, 'id:', c.id)
         elif isinstance(c, NumberCard):
-            print('Number Card - num:', c.number, ' col:', c.color)
+            print('Number Card - num:', c.number, ' col:', c.color, 'id:',c.id)
         elif isinstance(c, WildCard):
-            print('Wild Card - typ:', c.type)
+            print('Wild Card - typ:', c.type, 'id:', c.id)
 
 
 def init_color_card(card_deck):

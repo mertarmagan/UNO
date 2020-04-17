@@ -1,7 +1,9 @@
-
 class Card:
+    _id = 0
+
     def __init__(self):
-        pass
+        self.id = Card._id
+        Card._id += 1
 
 class WildCard(Card):
     def __init__(self, typ):
