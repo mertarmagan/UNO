@@ -1,3 +1,5 @@
+from uno.deck import deck
+
 
 def run():
-    print('hello world!')
+    deck.create()

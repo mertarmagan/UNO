@@ -8,15 +8,23 @@ from uno.deck.card_types.wild import Wild
 from random import randint
 
 
-def init():
+def create():
     card_deck = []
 
     init_color_card(card_deck)
     init_wild_card(card_deck)
 
-    print_deck(card_deck)
+    shuffle_deck(card_deck)
 
     return card_deck
+
+
+def shuffle_deck(deck):
+    n = len(deck)
+    for i in range(n - 1, 0, -1):
+        j = randint(0, i + 1)
+        deck[i], deck[j] = deck[j], deck[i]
+    return deck
 
 
 def draw_card(deck):
