@@ -15,6 +15,7 @@ def create():
     init_wild_card(card_deck)
 
     shuffle_deck(card_deck)
+    # print_deck(card_deck)
 
     return card_deck
 
@@ -37,7 +38,7 @@ def print_deck(card_deck):
         if isinstance(c, SpecialCard):
             print('Special Card - typ:', c.type, 'col:', c.color, 'id:', c.id)
         elif isinstance(c, NumberCard):
-            print('Number Card - num:', c.number, ' col:', c.color, 'id:',c.id)
+            print('Number Card - num:', c.number, ' col:', c.color, 'id:', c.id)
         elif isinstance(c, WildCard):
             print('Wild Card - typ:', c.type, 'id:', c.id)
 

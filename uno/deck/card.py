@@ -5,6 +5,16 @@ class Card:
         self.id = Card._id
         Card._id += 1
 
+    def getImageName(self):
+        path = ''
+        if isinstance(self, NumberCard):
+            path = self.color.value + '_' + str(self.number.value)
+        elif isinstance(self, SpecialCard):
+            path = self.color.value + '_' + self.type.value
+        elif isinstance(self, WildCard):
+            path = self.type.value
+        return path
+
 class WildCard(Card):
     def __init__(self, typ):
         super().__init__()
