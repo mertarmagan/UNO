@@ -1,4 +1,4 @@
-from uno import app
+from uno.ui import test
 
 if __name__ == '__main__':
-    app.run()
+    test.run()

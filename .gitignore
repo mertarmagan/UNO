@@ -1,3 +1,6 @@
 .DS_Store
 .idea
 venv
+uno/__pycache__
+uno/ui/__pycache__
+.vscode
