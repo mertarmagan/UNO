@@ -15,6 +15,14 @@ class Card:
             path = self.type.value
         return path
 
+    def print(self):
+        if isinstance(self, SpecialCard):
+            print('Special Card - typ:', self.type, 'col:', self.color, 'id:', self.id)
+        elif isinstance(self, NumberCard):
+            print('Number Card - num:', self.number, ' col:', self.color, 'id:', self.id)
+        elif isinstance(self, WildCard):
+            print('Wild Card - typ:', self.type, 'id:', self.id)
+
 class WildCard(Card):
     def __init__(self, typ):
         super().__init__()

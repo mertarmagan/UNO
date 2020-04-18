@@ -9,8 +9,8 @@ from random import randint
 
 
 class Deck():
-    cards = []
     def __init__(self):
+        self.cards = []
         self.create_cards()
 
     def create_cards(self):
@@ -34,12 +34,13 @@ class Deck():
 
     def print(self):
         for c in self.cards:
-            if isinstance(c, SpecialCard):
-                print('Special Card - typ:', c.type, 'col:', c.color, 'id:', c.id)
-            elif isinstance(c, NumberCard):
-                print('Number Card - num:', c.number, ' col:', c.color, 'id:', c.id)
-            elif isinstance(c, WildCard):
-                print('Wild Card - typ:', c.type, 'id:', c.id)
+            c.print()
+            # if isinstance(c, SpecialCard):
+            #     print('Special Card - typ:', c.type, 'col:', c.color, 'id:', c.id)
+            # elif isinstance(c, NumberCard):
+            #     print('Number Card - num:', c.number, ' col:', c.color, 'id:', c.id)
+            # elif isinstance(c, WildCard):
+            #     print('Wild Card - typ:', c.type, 'id:', c.id)
 
     def init_color_card(self):
         for c in Color:
