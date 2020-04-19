@@ -2,7 +2,7 @@ from uno.game import Game
 from uno.ui import uno_frame
 import logging
 # Configuring the logging function to display proper messages in console
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
 def run():
