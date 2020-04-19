@@ -4,8 +4,6 @@ from PIL import Image, ImageTk
 from tkinter import Tk, BOTH, StringVar
 from tkinter.ttk import Frame, Label, Style, LabelFrame, Button
 
-from uno.game import Game
-
 
 def card_clicked(id):
     print("{} is pressed.".format(id))
