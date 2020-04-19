@@ -29,18 +29,12 @@ class Deck():
         return self.cards
 
     def draw_card(self):
-        rand_card = randint(0, len(self.cards)-1)
+        rand_card = randint(0, len(self.cards) - 1)
         return self.cards.pop(rand_card)
 
     def print(self):
         for c in self.cards:
             c.print()
-            # if isinstance(c, SpecialCard):
-            #     print('Special Card - typ:', c.type, 'col:', c.color, 'id:', c.id)
-            # elif isinstance(c, NumberCard):
-            #     print('Number Card - num:', c.number, ' col:', c.color, 'id:', c.id)
-            # elif isinstance(c, WildCard):
-            #     print('Wild Card - typ:', c.type, 'id:', c.id)
 
     def init_color_card(self):
         for c in Color:
@@ -58,3 +52,7 @@ class Deck():
             self.cards.append(WildCard(Wild(w)))
             self.cards.append(WildCard(Wild(w)))
             self.cards.append(WildCard(Wild(w)))
+
+    def insert_random(self, card):
+        index = randint(0, len(self.cards) - 1)
+        self.cards.insert(index, card)
