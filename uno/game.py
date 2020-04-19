@@ -77,14 +77,16 @@ class Game:
             self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
             if current_card.type == Special.DRAW2:
                 self.special_draw2()
+                self.change_turn()
             elif current_card.type == Special.REVERSE:
                 self.special_reverse()
             elif current_card.type == Special.SKIP:
                 self.special_skip()
-        self.change_turn()
+                self.change_turn()
 
         while not self.finished:
             print('Current player:', self.get_current_player_index())
+            print("Number of player's cards:", len(self.get_current_player().cards))
             current_card = self.discard_card()
             print('Current card:')
             current_card.print()
