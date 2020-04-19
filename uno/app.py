@@ -8,4 +8,4 @@ def run():
     g = Game()
     g.start()
     print(g.get_current_card())
-    # g.deck.print()
+    print(g.get_current_player())

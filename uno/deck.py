@@ -18,13 +18,12 @@ class Deck():
         self.init_wild_card()
 
         self.shuffle()
-        # self.print()
+        # self.print(self.cards)
 
-    # TODO: DEBUG! There is a bug with shuffle, rarely its indices inside loop fall out of range.
     def shuffle(self):
         n = len(self.cards)
         for i in range(n - 1, 0, -1):
-            j = randint(0, i + 1)
+            j = randint(0, i)
             self.cards[i], self.cards[j] = self.cards[j], self.cards[i]
         return self.cards
 
