@@ -8,6 +8,4 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 def run():
     g = Game()
     g.start()
-    uno_frame.run(g)
-    print(g.get_current_card())
-    print(g.get_current_player())
+    # uno_frame.run(g)

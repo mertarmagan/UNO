@@ -1,7 +1,7 @@
-from uno.card import WildCard
-from uno.card import SpecialCard
-from uno.card import ColorCard
-from uno.card import NumberCard
+import time
+from uno.card import WildCard, SpecialCard
+from uno.card_types.special import Special
+from uno.card_types.wild import Wild
 from uno.deck import Deck
 from uno.player import ComputerPlayer
 from uno.player import HumanPlayer
@@ -22,8 +22,13 @@ class Game:
         self.draw_pile = self.deck.cards  # pile of cards have never played (list of cards)
         self.discard_pile = []  # pile of tossed cards in the middle (list of cards)
 
-        self.current_player = None
-        self.current_turn = -1
+        self.current_player_ind = -1
+        self.next_player_ind = -1
+
+        self.direction = True
+        self.wild_color = None
+
+        self.finished = False
 
     def create_players(self):
         logging.info('Players are created.')
@@ -40,7 +45,6 @@ class Game:
             for i in range(NUM_OF_INIT_CARDS):
                 card = self.deck.draw_card(self.draw_pile)
                 p.draw_card(card)
-            # p.print_hand()
 
     def open_card(self):
         logging.info('First card drawn for the startup.')
@@ -60,18 +64,126 @@ class Game:
         logging.info('A game is started.')
         self.deal_cards()
         self.open_card()
-        self.current_turn = 0
-        self.current_player = self.pick_starter()
+        self.current_player_ind = self.pick_starter()
+        self.next_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
+
+        print('Current player:', self.get_current_player_index())
+
+        current_card = self.get_current_card()
+        print('Current card:')
+        current_card.print()
+        if isinstance(current_card, SpecialCard):
+            self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
+            self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
+            if current_card.type == Special.DRAW2:
+                self.special_draw2()
+            elif current_card.type == Special.REVERSE:
+                self.special_reverse()
+            elif current_card.type == Special.SKIP:
+                self.special_skip()
+        self.change_turn()
+
+        while not self.finished:
+            print('Current player:', self.get_current_player_index())
+            current_card = self.discard_card()
+            print('Current card:')
+            current_card.print()
+            if isinstance(current_card, SpecialCard):
+                if current_card.type == Special.DRAW2:
+                    self.special_draw2()
+                elif current_card.type == Special.REVERSE:
+                    self.special_reverse()
+                elif current_card.type == Special.SKIP:
+                    self.special_skip()
+            elif isinstance(current_card, WildCard):
+                if current_card.type == Wild.WILD:
+                    self.wild()
+                elif current_card.type == Wild.WILD_DRAW4:
+                    self.wild_draw4()
+
+            self.change_turn()
 
     def get_current_card(self):
         # Returning the last element on discard pile or None in case it is empty
         return self.discard_pile[-1] if self.discard_pile else None
 
     def get_current_player(self):
-        return self.players[self.current_player]
+        return self.players[self.current_player_ind]
 
-    def get_current_turn(self):
-        return self.current_turn
+    def get_next_player(self):
+        return self.players[self.next_player_ind]
+
+    def get_current_player_index(self):
+        return self.current_player_ind
+
+    def get_next_player_index(self):
+        return self.next_player_ind
 
     def change_turn(self):
-        self.current_player = (self.current_player + 1) % NUM_OF_PLAYERS
+        if self.direction:
+            self.current_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
+            self.next_player_ind = (self.next_player_ind + 1) % NUM_OF_PLAYERS
+        else:
+            self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
+            self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
+
+    def special_skip(self):
+        self.change_turn()
+
+    def special_draw2(self):
+        next_player = self.get_next_player()
+        for i in range(2):
+            card = self.deck.draw_card(self.draw_pile)
+            next_player.draw_card(card)
+        self.change_turn()
+
+    def special_reverse(self):
+        self.direction = not self.direction
+
+    def wild(self):
+        cur_player = self.get_current_player()
+        self.wild_color = cur_player.pick_color()
+
+    def wild_draw4(self):
+        cur_player = self.get_current_player()
+        self.wild_color = cur_player.pick_color()
+
+        next_player = self.get_next_player()
+        for i in range(4):
+            card = self.deck.draw_card(self.draw_pile)
+            next_player.draw_card(card)
+        self.change_turn()
+
+    def discard_card(self):
+        current_player = self.get_current_player()
+        available = current_player.find_available_cards(self.get_current_card(), self.wild_color)
+        disc_card = None
+
+        if not available:
+            card = self.deck.draw_card(self.draw_pile)
+            current_player.draw_card(card)
+
+        available = current_player.find_available_cards(self.get_current_card(), self.wild_color)
+
+        if available:
+            print('Please choose a card from bottom:')
+            for c in available:
+                c.print()
+
+            if isinstance(current_player, HumanPlayer):
+                card_input = int(input('Select a card:'))
+            elif isinstance(current_player, ComputerPlayer):
+                time.sleep(3)
+                card_input = randint(0, len(available)-1)
+
+            disc_card = available[card_input]
+            current_player.discard_card(disc_card)
+        else:
+            time.sleep(3)
+            return self.get_current_card()
+
+        if len(current_player.cards) == 0:
+            self.finished = True
+
+        self.discard_pile.append(disc_card)
+        return disc_card
