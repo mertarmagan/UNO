@@ -15,10 +15,12 @@ NUM_OF_PLAYERS = 4
 class Game:
     def __init__(self):
         logging.info('A game is created.')
-        self.deck = Deck()
-        self.players = []
+        self.deck = Deck()  # deck of default cards
+        self.players = []  # list of players including Computer and Human
         self.create_players()
-        self.current_card = None
+
+        self.draw_pile = self.deck.cards  # pile of cards have never played (list of cards)
+        self.discard_pile = []  # pile of tossed cards in the middle (list of cards)
 
     def create_players(self):
         logging.info('Players are created.')
@@ -33,20 +35,25 @@ class Game:
         # Dealing cards for each player
         for p in self.players:
             for i in range(NUM_OF_INIT_CARDS):
-                card = self.deck.draw_card()
+                card = self.deck.draw_card(self.draw_pile)
                 p.draw_card(card)
             # p.print_hand()
 
     def open_card(self):
-        logging.info('First current card opened.')
-        self.current_card = self.deck.draw_card()
+        logging.info('First card drawn for the startup.')
+        current_card = self.deck.draw_card(self.draw_pile)
         # Re-drawing a card in case it is a Wild Card
-        while isinstance(self.current_card, WildCard):
-            self.deck.insert_random(self.current_card)
-            self.current_card = self.deck.draw_card()
+        while isinstance(current_card, WildCard):
+            logging.warning('A WILD CARD drawn and re-drawing a card for the startup!')
+            self.deck.insert_random(current_card, self.draw_pile)
+            current_card = self.deck.draw_card(self.draw_pile)
+        self.discard_pile.append(current_card)
 
     def start(self):
         logging.info('A game is started.')
         self.deal_cards()
         self.open_card()
 
+    def get_current_card(self):
+        # Returning the last element on discard pile or None in case it is empty
+        return self.discard_pile[-1] if self.discard_pile else None

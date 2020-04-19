@@ -19,8 +19,8 @@ class Deck():
 
         self.shuffle()
         # self.print()
-        return
 
+    # TODO: DEBUG! There is a bug with shuffle, rarely its indices inside loop fall out of range.
     def shuffle(self):
         n = len(self.cards)
         for i in range(n - 1, 0, -1):
@@ -28,12 +28,12 @@ class Deck():
             self.cards[i], self.cards[j] = self.cards[j], self.cards[i]
         return self.cards
 
-    def draw_card(self):
+    def draw_card(self, pile):
         rand_card = randint(0, len(self.cards) - 1)
-        return self.cards.pop(rand_card)
+        return pile.pop(rand_card)
 
-    def print(self):
-        for c in self.cards:
+    def print(self, pile):
+        for c in pile:
             c.print()
 
     def init_color_card(self):
@@ -53,6 +53,6 @@ class Deck():
             self.cards.append(WildCard(Wild(w)))
             self.cards.append(WildCard(Wild(w)))
 
-    def insert_random(self, card):
-        index = randint(0, len(self.cards) - 1)
-        self.cards.insert(index, card)
+    def insert_random(self, card, pile):
+        index = randint(0, len(pile) - 1)
+        pile.insert(index, card)

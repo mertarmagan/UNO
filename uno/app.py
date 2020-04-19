@@ -7,5 +7,5 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 def run():
     g = Game()
     g.start()
-    g.current_card.print()
+    print(g.get_current_card())
     # g.deck.print()

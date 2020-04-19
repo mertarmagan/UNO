@@ -15,8 +15,14 @@ class Player():
             c.print()
         print()
 
-    def getNumOfCards(self):
+    def get_num_of_cards(self):
         return len(self.cards)
+
+    def get_cards(self):
+        return self.cards
+
+    def get_id(self):
+        return self.id
 
 
 class HumanPlayer(Player):
