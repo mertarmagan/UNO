@@ -82,7 +82,6 @@ def run(game):
     # and where it is placed
     root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-    game.players[0].print_hand()
     app = UnoFrame()
     app.draw_init(game.players[0].cards)
     root.mainloop()

@@ -16,12 +16,18 @@ class Card:
         return path
 
     def print(self):
+        out = ''
         if isinstance(self, SpecialCard):
-            print('Special Card - typ:', self.type, 'col:', self.color, 'id:', self.id)
+            out = [str(self.type), str(self.color), '(' + str(self.id) + ')']
+            # print('Special Card - typ:', self.type, 'col:', self.color, 'id:', self.id)
         elif isinstance(self, NumberCard):
-            print('Number Card - num:', self.number, ' col:', self.color, 'id:', self.id)
+            out = [str(self.number), str(self.color), '(' + str(self.id) + ')']
+            # print('Number Card - num:', self.number, ' col:', self.color, 'id:', self.id)
         elif isinstance(self, WildCard):
-            print('Wild Card - typ:', self.type, 'id:', self.id)
+            out = [str(self.type), '(' + str(self.id) + ')']
+            # print('Wild Card - typ:', self.type, 'id:', self.id)
+        out = ' '.join(out)
+        print(out)
 
 class WildCard(Card):
     def __init__(self, typ):

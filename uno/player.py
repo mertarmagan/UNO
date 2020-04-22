@@ -1,3 +1,4 @@
+import sys
 from random import randint
 
 from uno.card import ColorCard, NumberCard, SpecialCard, WildCard
@@ -62,10 +63,18 @@ class Player:
     def pick_color(self):
         color = None
         color_input = None
+        index = 0
+        for c in Color:
+            print('   ' + str(index) + '-', end='')
+            print(Color(c))
+            index += 1
+
         if isinstance(self, HumanPlayer):
-            color_input = int(input("Please choose a color(0-R, 1-G, 2-B, 3-Y): "))
-            while color_input not in range(0,4):
-                color_input = int(input("Please choose a color(0-R, 1-G, 2-B, 3-Y): "))
+            # color_input = int(input("Please choose a color(0-R, 1-G, 2-B, 3-Y): "))
+            color_input = int(sys.stdin.readline())
+            while color_input not in range(0, 4):
+                # color_input = int(input("Please choose a color(0-R, 1-G, 2-B, 3-Y): ")
+                color_input = int(sys.stdin.readline())
         elif isinstance(self, ComputerPlayer):
             color_input = randint(0, 3)
 
