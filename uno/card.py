@@ -5,7 +5,7 @@ class Card:
         self.id = Card._id
         Card._id += 1
 
-    def getImageName(self):
+    def get_image_name(self):
         path = ''
         if isinstance(self, NumberCard):
             path = self.color.value + '_' + str(self.number.value)

@@ -71,11 +71,9 @@ class Game:
     def start(self):
         logging.info('A game is started.')
         self.deal_cards()
-
-        self.frame.show_hand(self.human_player.get_cards())
-
         self.print_hands()
         self.open_card()
+        self.frame.show_hand(self.human_player.get_cards(), self.human_player.find_available_cards(self.get_current_card(), self.wild_color), self.get_current_player())
         self.current_player_ind = self.pick_starter()
 
         print('\n**************************** GAME STARTED ***************************')
@@ -151,7 +149,7 @@ class Game:
         else:
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
         self.frame.update_num_of_cards(self.get_current_player_index(), len(self.get_current_player().cards))
-        self.frame.show_hand(self.human_player.get_cards())
+        self.frame.show_hand(self.human_player.get_cards(), self.human_player.find_available_cards(self.get_current_card(), self.wild_color), self.get_current_player())
         print('\n**************************** NEXT PLAYER ***************************')
 
     def special_skip(self):
@@ -188,7 +186,7 @@ class Game:
         if not available:
             card = self.deck.draw_card(self.draw_pile)
             current_player.draw_card(card)
-            self.frame.show_hand(self.human_player.get_cards())
+            self.frame.show_hand(self.human_player.get_cards(), self.human_player.find_available_cards(self.get_current_card(), self.wild_color), self.get_current_player())
             print('No available, drawing a card: ', end='')
             card.print()
 
@@ -201,8 +199,9 @@ class Game:
                 available[index].print()
 
             if isinstance(current_player, HumanPlayer):
-                # card_input = int(input('Select a card:'))
-                card_input = int(sys.stdin.readline())
+                self.frame.event.wait()
+                card_input = self.frame.card_input
+                # card_input = int(sys.stdin.readline())
             elif isinstance(current_player, ComputerPlayer):
                 time.sleep(3)
                 card_input = randint(0, len(available) - 1)

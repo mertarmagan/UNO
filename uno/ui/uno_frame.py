@@ -1,19 +1,16 @@
 import threading
-from time import sleep
-
 from PIL import Image, ImageTk
-from tkinter import Tk, BOTH, StringVar, DISABLED, NORMAL
+from tkinter import Tk, StringVar, DISABLED, NORMAL
 from tkinter.ttk import Frame, Label, Style, LabelFrame, Button
 
-
-def card_clicked(id):
-    print("{} is pressed.".format(id))
+from uno.player import HumanPlayer
 
 
 class UnoFrame(Frame):
 
     def __init__(self):
         super().__init__()
+        self.current_aval = []
         self.text0, self.text1, self.text2, self.text3 = StringVar(), StringVar(), StringVar(), StringVar()
         self.texts = [self.text0, self.text1, self.text2, self.text3]
         self.player1_group, self.player2_group, self.player3_group, self.player4_group, self.center_group = None, None, None, None, None
@@ -22,8 +19,10 @@ class UnoFrame(Frame):
         self.labels = []
         self.blue_btn, self.pick_card_btn, self.red_btn, self.yellow_btn, self.green_btn = None, None, None, None, None
         self.buttons = []
-
         self.card_buttons = []
+
+        self.event = threading.Event()
+        self.card_input = -1
 
         self.init_ui()
 
@@ -39,12 +38,19 @@ class UnoFrame(Frame):
         self.create_labels()
         self.create_buttons()
 
-    def show_hand(self, cards):
-        for i in range(0, len(self.card_buttons)):
+    def show_hand(self, cards, aval_cards, cur_player):
+        self.event.clear()
+        self.current_aval = aval_cards
+        for i in range(len(self.card_buttons)):
             self.card_buttons[i].destroy()
-        for i in range(0, len(cards)):
-            c_n = cards[i].getImageName()
+        self.card_buttons.clear()
+        for i in range(len(cards)):
+            c_n = cards[i].get_image_name()
             self.load_image(self.player1_group, c_n, "uno/ui/images/{}.png".format(c_n), i * 30 + 20, 0, False)
+            if cards[i] not in aval_cards or not isinstance(cur_player, HumanPlayer):
+                self.card_buttons[i].config(state=DISABLED)
+            else:
+                self.card_buttons[i].config(state=NORMAL)
 
     def create_buttons(self):
         self.pick_card_btn = Button(self.player1_group, text="DRAW")
@@ -62,11 +68,11 @@ class UnoFrame(Frame):
         self.buttons = [self.blue_btn, self.red_btn, self.yellow_btn, self.green_btn]
 
     def create_frames(self):
-        self.player1_group = LabelFrame(self.master, text="Player 1", labelanchor="n", style="Default.TFrame",
+        self.player1_group = LabelFrame(self.master, text="Player 0", labelanchor="n", style="Default.TFrame",
                                         borderwidth="50")
-        self.player2_group = LabelFrame(self.master, text="Player 2", labelanchor="n", style="Default.TFrame")
-        self.player3_group = LabelFrame(self.master, text="Player 3", labelanchor="n", style="Default.TFrame")
-        self.player4_group = LabelFrame(self.master, text="Player 4", labelanchor="n", style="Default.TFrame")
+        self.player2_group = LabelFrame(self.master, text="Player 1", labelanchor="n", style="Default.TFrame")
+        self.player3_group = LabelFrame(self.master, text="Player 2", labelanchor="n", style="Default.TFrame")
+        self.player4_group = LabelFrame(self.master, text="Player 3", labelanchor="n", style="Default.TFrame")
         self.center_group = LabelFrame(self.master, text="CENTER", labelanchor="n", style="Center.TFrame")
 
         self.player1_group.grid(row=2, column=0, columnspan=3, sticky="nsew", ipadx=300, ipady=150)
@@ -93,7 +99,7 @@ class UnoFrame(Frame):
                 self.players[i].configure(style="Default.TFrame")
 
     def update_cur_card(self, card):
-        cur_card = card.getImageName()
+        cur_card = card.get_image_name()
         self.load_image(self.center_group, cur_card, "uno/ui/images/{}.png".format(cur_card), 30, 30, True)
 
     def toggle_color_buttons(self):
@@ -107,18 +113,29 @@ class UnoFrame(Frame):
     def update_num_of_cards(self, player_i, num):
         self.texts[player_i].set("# of cards: {}".format(num))
 
-    def load_image(self, parent, card_id, path, x_coor, y_coor, is_center_card):
+    def load_image(self, parent, card_name, path, x_coor, y_coor, is_center_card):
         img = Image.open(path)
         p_img = ImageTk.PhotoImage(img)
 
         label = Label(parent, image=p_img)
         label.image = p_img
 
-        button = Button(parent, image=p_img, command=lambda: card_clicked(card_id))
+        button = Button(parent, image=p_img, command=lambda: self.card_clicked(card_name))
         button.place(x=x_coor, y=y_coor)
 
         if not is_center_card:
             self.card_buttons.append(button)
+        else:
+            button.config(state=DISABLED)
+
+    def card_clicked(self, card_name):
+        print("{} is pressed.".format(card_name))
+
+        for index, c in enumerate(self.current_aval):
+            if c.get_image_name() == card_name:
+                self.card_input = index
+                break
+        self.event.set()
 
 
 class UI:
