@@ -43,7 +43,7 @@ class UnoFrame(Frame):
         self.create_labels()
         self.create_buttons()
 
-    def draw_hand(self, cards):
+    def show_hand(self, cards):
         for i in range(0, len(cards)):
             c_n = cards[i].getImageName()
             load_image(self.player1_group, c_n, "uno/ui/images/{}.png".format(c_n), i * 30 + 20, 0)
@@ -105,35 +105,40 @@ class UnoFrame(Frame):
                 self.buttons[i].config(state=DISABLED)
 
 
-def run(game):
-    root = Tk()
+class UI:
+    def __init__(self):
+        self.frame = None
+        self.run()
 
-    w = 1024  # width for the Tk root
-    h = 768  # height for the Tk root
+    def run(self):
+        root = Tk()
 
-    # get screen width and height
-    ws = root.winfo_screenwidth()  # width of the screen
-    hs = root.winfo_screenheight()  # height of the screen
+        w = 1024  # width for the Tk root
+        h = 768  # height for the Tk root
 
-    # calculate x and y coordinates for the Tk root window
-    x = (ws / 2) - (w / 2)
-    y = (hs / 2) - (h / 2)
+        # get screen width and height
+        ws = root.winfo_screenwidth()  # width of the screen
+        hs = root.winfo_screenheight()  # height of the screen
 
-    # set the dimensions of the screen
-    # and where it is placed
-    root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        # calculate x and y coordinates for the Tk root window
+        x = (ws / 2) - (w / 2)
+        y = (hs / 2) - (h / 2)
 
-    # game.players[0].print_hand()
-    app = UnoFrame()
+        # set the dimensions of the screen
+        # and where it is placed
+        root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-    app.draw_hand(game.players[0].cards)
+        # game.players[0].print_hand()
+        self.frame = UnoFrame()
 
-    game.players[0].draw_card(game.deck.draw_card(game.draw_pile))
-    app.draw_hand(game.players[0].cards)
+        # app.draw_hand(game.players[0].cards)
 
-    # app.toggle_color_buttons()
+        # game.players[0].draw_card(game.deck.draw_card(game.draw_pile))
+        # app.draw_hand(game.players[0].cards)
 
-    app.highlight_player(1)
-    app.update_cur_card(game.get_current_card())
+        # app.toggle_color_buttons()
 
-    root.mainloop()
+        # app.highlight_player(1)
+        # app.update_cur_card(game.get_current_card())
+
+        root.mainloop()
