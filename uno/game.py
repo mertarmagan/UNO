@@ -73,8 +73,10 @@ class Game:
         self.deal_cards()
         self.print_hands()
         self.open_card()
-        self.frame.show_hand(self.human_player.get_cards(), self.human_player.find_available_cards(self.get_current_card(), self.wild_color), self.get_current_player())
         self.current_player_ind = self.pick_starter()
+        self.frame.show_hand(self.human_player.get_cards(),
+                             self.human_player.find_available_cards(self.get_current_card(), self.wild_color),
+                             self.get_current_player())
 
         print('\n**************************** GAME STARTED ***************************')
         print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
@@ -89,11 +91,12 @@ class Game:
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
             if current_card.type == Special.DRAW2:
                 self.special_draw2()
+                self.change_turn()
             elif current_card.type == Special.REVERSE:
                 self.special_reverse()
             elif current_card.type == Special.SKIP:
                 self.special_skip()
-            self.change_turn()
+                self.change_turn()
         else:
             print('\n**************************** PLAYER CONT. ***************************')
 
@@ -167,11 +170,11 @@ class Game:
 
     def wild(self):
         cur_player = self.get_current_player()
-        self.wild_color = cur_player.pick_color()
+        self.wild_color = cur_player.pick_color(self.frame)
 
     def wild_draw4(self):
         cur_player = self.get_current_player()
-        self.wild_color = cur_player.pick_color()
+        self.wild_color = cur_player.pick_color(self.frame)
 
         next_player = self.get_next_player()
         for i in range(4):

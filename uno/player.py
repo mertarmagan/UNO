@@ -59,7 +59,7 @@ class Player:
 
         return avail_cards
 
-    def pick_color(self):
+    def pick_color(self, frame):
         color = None
         color_input = None
         index = 0
@@ -69,9 +69,14 @@ class Player:
             index += 1
 
         if isinstance(self, HumanPlayer):
-            color_input = int(sys.stdin.readline())
+            print(frame.color_input)
+            frame.color_event.wait()
+            color_input = frame.color_input
+            print("GELDİ")
+            """color_input = int(sys.stdin.readline())
             while color_input not in range(0, 4):
-                color_input = int(sys.stdin.readline())
+                color_input = int(sys.stdin.readline())"""
+
         elif isinstance(self, ComputerPlayer):
             color_input = randint(0, 3)
 

@@ -20,9 +20,11 @@ class UnoFrame(Frame):
         self.blue_btn, self.pick_card_btn, self.red_btn, self.yellow_btn, self.green_btn = None, None, None, None, None
         self.buttons = []
         self.card_buttons = []
-
+        self.color_event = threading.Event()
         self.event = threading.Event()
         self.card_input = -1
+        self.color_input = -1
+
 
         self.init_ui()
 
@@ -40,6 +42,7 @@ class UnoFrame(Frame):
 
     def show_hand(self, cards, aval_cards, cur_player):
         self.event.clear()
+        self.color_event.clear()
         self.current_aval = aval_cards
         for i in range(len(self.card_buttons)):
             self.card_buttons[i].destroy()
@@ -53,19 +56,17 @@ class UnoFrame(Frame):
                 self.card_buttons[i].config(state=NORMAL)
 
     def create_buttons(self):
-        self.pick_card_btn = Button(self.player1_group, text="DRAW")
-        self.red_btn = Button(self.player1_group, text="RED")
-        self.yellow_btn = Button(self.player1_group, text="YELLOW")
-        self.green_btn = Button(self.player1_group, text="GREEN")
-        self.blue_btn = Button(self.player1_group, text="BLUE")
+        self.red_btn = Button(self.player1_group, text="RED", command=lambda : self.color_clicked("red"), state=DISABLED)
+        self.green_btn = Button(self.player1_group, text="GREEN", command=lambda : self.color_clicked("green"), state=DISABLED)
+        self.blue_btn = Button(self.player1_group, text="BLUE", command=lambda : self.color_clicked("blue"), state=DISABLED)
+        self.yellow_btn = Button(self.player1_group, text="YELLOW", command=lambda : self.color_clicked("yellow"), state=DISABLED)
 
-        self.pick_card_btn.pack(side="left")
-        self.red_btn.pack(side="right")
-        self.yellow_btn.pack(side="right")
-        self.green_btn.pack(side="right")
-        self.blue_btn.pack(side="right")
+        self.red_btn.pack(side="left")
+        self.green_btn.pack(side="left")
+        self.blue_btn.pack(side="left")
+        self.yellow_btn.pack(side="left")
 
-        self.buttons = [self.blue_btn, self.red_btn, self.yellow_btn, self.green_btn]
+        self.buttons = [self.red_btn, self.green_btn, self.blue_btn, self.yellow_btn]
 
     def create_frames(self):
         self.player1_group = LabelFrame(self.master, text="Player 0", labelanchor="n", style="Default.TFrame",
@@ -102,12 +103,11 @@ class UnoFrame(Frame):
         cur_card = card.get_image_name()
         self.load_image(self.center_group, cur_card, "uno/ui/images/{}.png".format(cur_card), 30, 30, True)
 
-    def toggle_color_buttons(self):
+    def toggle_color_buttons(self, bool):
         for i in range(len(self.buttons)):
-            state = str(self.buttons[i]["state"])
-            if state == "disabled":
+            if bool:
                 self.buttons[i].config(state=NORMAL)
-            if state == "normal":
+            else:
                 self.buttons[i].config(state=DISABLED)
 
     def update_num_of_cards(self, player_i, num):
@@ -133,9 +133,21 @@ class UnoFrame(Frame):
 
         for index, c in enumerate(self.current_aval):
             if c.get_image_name() == card_name:
+                if card_name == "wild" or card_name == "wild_draw4":
+                    self.toggle_color_buttons(True)
+                else:
+                    self.toggle_color_buttons(False)
                 self.card_input = index
                 break
         self.event.set()
+
+    def color_clicked(self, color):
+        print("{} is selected.".format(color))
+        if color == "red": self.color_input = 0
+        elif color == "green": self.color_input = 1
+        elif color == "blue": self.color_input = 2
+        elif color == "yellow": self.color_input = 3
+        self.color_event.set()
 
 
 class UI:
