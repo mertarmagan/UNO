@@ -69,10 +69,8 @@ class Player:
             index += 1
 
         if isinstance(self, HumanPlayer):
-            # color_input = int(input("Please choose a color(0-R, 1-G, 2-B, 3-Y): "))
             color_input = int(sys.stdin.readline())
             while color_input not in range(0, 4):
-                # color_input = int(input("Please choose a color(0-R, 1-G, 2-B, 3-Y): ")
                 color_input = int(sys.stdin.readline())
         elif isinstance(self, ComputerPlayer):
             color_input = randint(0, 3)
