@@ -1,3 +1,4 @@
+import threading
 from time import sleep
 
 from PIL import Image, ImageTk
@@ -106,8 +107,9 @@ class UnoFrame(Frame):
 
 
 class UI:
-    def __init__(self):
+    def __init__(self, game_thread):
         self.frame = None
+        self.game_thread = game_thread
         self.run()
 
     def run(self):
@@ -140,5 +142,9 @@ class UI:
 
         # app.highlight_player(1)
         # app.update_cur_card(game.get_current_card())
+        def task():
+            g = threading.Thread(target=self.game_thread, args=[self.frame])
+            g.start()
 
+        root.after(0, task)
         root.mainloop()

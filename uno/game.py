@@ -16,10 +16,13 @@ NUM_OF_PLAYERS = 4
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, frame):
         logging.info('A game is created.')
+        self.frame = frame  # UI thread's Frame
         self.deck = Deck()  # deck of default cards
         self.players = []  # list of players including Computer and Human
+        self.human_player = None
+
         self.create_players()
 
         self.draw_pile = self.deck.cards  # pile of cards have never played (list of cards)
@@ -36,7 +39,8 @@ class Game:
     def create_players(self):
         logging.info('Players are created.')
         # Creating Human player which waits for input every turn
-        self.players.append(HumanPlayer())
+        self.human_player = HumanPlayer()
+        self.players.append(self.human_player)
         # Creating AI players which play available cards randomly
         for p in range(NUM_OF_PLAYERS-1):
             self.players.append(ComputerPlayer())
@@ -66,6 +70,9 @@ class Game:
     def start(self):
         logging.info('A game is started.')
         self.deal_cards()
+
+        self.frame.show_hand(self.human_player.get_cards())
+
         self.print_hands()
         self.open_card()
         self.current_player_ind = self.pick_starter()
