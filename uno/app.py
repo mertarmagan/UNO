@@ -5,12 +5,15 @@ import logging
 # Configuring the logging function to display proper messages in console
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
+
 def game_thread(frame):
     game = Game(frame)
     game.start()
 
+
 def ui_thread(ui):
     ui.run()
+
 
 def run():
     # g = threading.Thread(target=game_thread, args=[])

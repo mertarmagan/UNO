@@ -10,26 +10,21 @@ def card_clicked(id):
     print("{} is pressed.".format(id))
 
 
-def load_image(parent, card_id, path, x_coor, y_coor):
-    img = Image.open(path)
-    p_img = ImageTk.PhotoImage(img)
-
-    label = Label(parent, image=p_img)
-    label.image = p_img
-
-    button = Button(parent, image=p_img, command=lambda: card_clicked(card_id))
-    button.place(x=x_coor, y=y_coor)
-
-
 class UnoFrame(Frame):
 
     def __init__(self):
         super().__init__()
+        self.text0, self.text1, self.text2, self.text3 = StringVar(), StringVar(), StringVar(), StringVar()
+        self.texts = [self.text0, self.text1, self.text2, self.text3]
         self.player1_group, self.player2_group, self.player3_group, self.player4_group, self.center_group = None, None, None, None, None
         self.players = []
         self.cnt_p1, self.cnt_p2, self.cnt_p3, self.cnt_p4 = None, None, None, None
+        self.labels = []
         self.blue_btn, self.pick_card_btn, self.red_btn, self.yellow_btn, self.green_btn = None, None, None, None, None
         self.buttons = []
+
+        self.card_buttons = []
+
         self.init_ui()
 
     def init_ui(self):
@@ -45,9 +40,11 @@ class UnoFrame(Frame):
         self.create_buttons()
 
     def show_hand(self, cards):
+        for i in range(0, len(self.card_buttons)):
+            self.card_buttons[i].destroy()
         for i in range(0, len(cards)):
             c_n = cards[i].getImageName()
-            load_image(self.player1_group, c_n, "uno/ui/images/{}.png".format(c_n), i * 30 + 20, 0)
+            self.load_image(self.player1_group, c_n, "uno/ui/images/{}.png".format(c_n), i * 30 + 20, 0, False)
 
     def create_buttons(self):
         self.pick_card_btn = Button(self.player1_group, text="DRAW")
@@ -81,10 +78,12 @@ class UnoFrame(Frame):
         self.players = [self.player1_group, self.player2_group, self.player3_group, self.player4_group]
 
     def create_labels(self):
-        self.cnt_p1 = Label(self.player1_group, text="# of cards:").pack(side="top")
-        self.cnt_p2 = Label(self.player2_group, text="# of cards:").pack()
-        self.cnt_p3 = Label(self.player3_group, text="# of cards:").pack()
-        self.cnt_p4 = Label(self.player4_group, text="# of cards:").pack()
+        self.cnt_p1 = Label(self.player1_group, textvariable=self.text0).pack(side="top")
+        self.cnt_p2 = Label(self.player2_group, textvariable=self.text1).pack()
+        self.cnt_p3 = Label(self.player3_group, textvariable=self.text2).pack()
+        self.cnt_p4 = Label(self.player4_group, textvariable=self.text3).pack()
+
+        self.labels = [self.cnt_p1, self.cnt_p2, self.cnt_p3, self.cnt_p4]
 
     def highlight_player(self, cur_player_i):
         for i in range(len(self.players)):
@@ -95,7 +94,7 @@ class UnoFrame(Frame):
 
     def update_cur_card(self, card):
         cur_card = card.getImageName()
-        load_image(self.center_group, cur_card, "uno/ui/images/{}.png".format(cur_card), 30, 30)
+        self.load_image(self.center_group, cur_card, "uno/ui/images/{}.png".format(cur_card), 30, 30, True)
 
     def toggle_color_buttons(self):
         for i in range(len(self.buttons)):
@@ -104,6 +103,22 @@ class UnoFrame(Frame):
                 self.buttons[i].config(state=NORMAL)
             if state == "normal":
                 self.buttons[i].config(state=DISABLED)
+
+    def update_num_of_cards(self, player_i, num):
+        self.texts[player_i].set("# of cards: {}".format(num))
+
+    def load_image(self, parent, card_id, path, x_coor, y_coor, is_center_card):
+        img = Image.open(path)
+        p_img = ImageTk.PhotoImage(img)
+
+        label = Label(parent, image=p_img)
+        label.image = p_img
+
+        button = Button(parent, image=p_img, command=lambda: card_clicked(card_id))
+        button.place(x=x_coor, y=y_coor)
+
+        if not is_center_card:
+            self.card_buttons.append(button)
 
 
 class UI:
@@ -130,7 +145,6 @@ class UI:
         # and where it is placed
         root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-        # game.players[0].print_hand()
         self.frame = UnoFrame()
 
         # app.draw_hand(game.players[0].cards)

@@ -42,16 +42,17 @@ class Game:
         self.human_player = HumanPlayer()
         self.players.append(self.human_player)
         # Creating AI players which play available cards randomly
-        for p in range(NUM_OF_PLAYERS-1):
+        for p in range(NUM_OF_PLAYERS - 1):
             self.players.append(ComputerPlayer())
 
     def deal_cards(self):
         logging.info('Cards are dealt.')
         # Dealing cards for each player
-        for p in self.players:
+        for index, p in enumerate(self.players):
             for i in range(NUM_OF_INIT_CARDS):
                 card = self.deck.draw_card(self.draw_pile)
                 p.draw_card(card)
+            self.frame.update_num_of_cards(index, NUM_OF_INIT_CARDS)
 
     def open_card(self):
         logging.info('First card drawn for the startup.')
@@ -65,7 +66,7 @@ class Game:
 
     def pick_starter(self):
         # Be careful with randint function, start <= N <= end (all inclusive range)
-        return randint(0, len(self.players)-1)
+        return randint(0, len(self.players) - 1)
 
     def start(self):
         logging.info('A game is started.')
@@ -79,10 +80,11 @@ class Game:
 
         print('\n**************************** GAME STARTED ***************************')
         print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
-
         self.frame.highlight_player(self.get_current_player_index())
 
         current_card = self.get_current_card()
+        self.frame.update_cur_card(current_card)
+
         print('Top Card:', end=' ')
         current_card.print()
         if isinstance(current_card, SpecialCard):
@@ -99,8 +101,13 @@ class Game:
 
         while not self.finished:
             print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
+            self.frame.highlight_player(self.get_current_player_index())
             print("Num. of cards:", len(self.get_current_player().cards))
             current_card = self.discard_card()
+
+            self.frame.update_num_of_cards(self.get_current_player_index(), len(self.get_current_player().cards))
+
+            self.frame.update_cur_card(current_card)
             print('Top Card:', end=' ')
             current_card.print()
             if not self.skipped:
@@ -143,6 +150,8 @@ class Game:
             self.current_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
         else:
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
+        self.frame.update_num_of_cards(self.get_current_player_index(), len(self.get_current_player().cards))
+        self.frame.show_hand(self.human_player.get_cards())
         print('\n**************************** NEXT PLAYER ***************************')
 
     def special_skip(self):
@@ -179,6 +188,7 @@ class Game:
         if not available:
             card = self.deck.draw_card(self.draw_pile)
             current_player.draw_card(card)
+            self.frame.show_hand(self.human_player.get_cards())
             print('No available, drawing a card: ', end='')
             card.print()
 
@@ -195,7 +205,7 @@ class Game:
                 card_input = int(sys.stdin.readline())
             elif isinstance(current_player, ComputerPlayer):
                 time.sleep(3)
-                card_input = randint(0, len(available)-1)
+                card_input = randint(0, len(available) - 1)
 
             disc_card = available[card_input]
             current_player.discard_card(disc_card)
