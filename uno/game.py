@@ -26,12 +26,11 @@ class Game:
         self.discard_pile = []  # pile of tossed cards in the middle (list of cards)
 
         self.current_player_ind = -1
-        # self.next_player_ind = -1
 
         self.direction = True
         self.wild_color = None
-        self.skipped = False
 
+        self.skipped = False
         self.finished = False
 
     def create_players(self):
@@ -70,7 +69,6 @@ class Game:
         self.print_hands()
         self.open_card()
         self.current_player_ind = self.pick_starter()
-        # self.next_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
 
         print('\n**************************** GAME STARTED ***************************')
         print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
@@ -80,7 +78,6 @@ class Game:
         current_card.print()
         if isinstance(current_card, SpecialCard):
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
-            # self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
             if current_card.type == Special.DRAW2:
                 self.special_draw2()
             elif current_card.type == Special.REVERSE:
@@ -135,10 +132,8 @@ class Game:
     def change_turn(self):
         if self.direction:
             self.current_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
-            # self.next_player_ind = (self.next_player_ind + 1) % NUM_OF_PLAYERS
         else:
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
-            # self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
         print('\n**************************** NEXT PLAYER ***************************')
 
     def special_skip(self):
