@@ -16,9 +16,10 @@ NUM_OF_PLAYERS = 4
 
 
 class Game:
-    def __init__(self, frame):
+    def __init__(self, frame, root):
         logging.info('A game is created.')
         self.frame = frame  # UI thread's Frame
+        self.root = root
         self.deck = Deck()  # deck of default cards
         self.players = []  # list of players including Computer and Human
         self.human_player = None
@@ -126,6 +127,7 @@ class Game:
                         self.wild_draw4()
 
             self.change_turn()
+        self.root.destroy()
 
     def get_current_card(self):
         # Returning the last element on discard pile or None in case it is empty

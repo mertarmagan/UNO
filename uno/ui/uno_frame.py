@@ -186,7 +186,7 @@ class UI:
         # app.highlight_player(1)
         # app.update_cur_card(game.get_current_card())
         def task():
-            g = threading.Thread(target=self.game_thread, args=[self.frame])
+            g = threading.Thread(target=self.game_thread, args=[self.frame, root])
             g.start()
 
         root.after(0, task)

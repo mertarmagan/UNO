@@ -6,8 +6,8 @@ import logging
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
-def game_thread(frame):
-    game = Game(frame)
+def game_thread(frame, root):
+    game = Game(frame, root)
     game.start()
 
 
