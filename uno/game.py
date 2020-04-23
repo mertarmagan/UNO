@@ -26,10 +26,11 @@ class Game:
         self.discard_pile = []  # pile of tossed cards in the middle (list of cards)
 
         self.current_player_ind = -1
-        self.next_player_ind = -1
+        # self.next_player_ind = -1
 
         self.direction = True
         self.wild_color = None
+        self.skipped = False
 
         self.finished = False
 
@@ -66,9 +67,10 @@ class Game:
     def start(self):
         logging.info('A game is started.')
         self.deal_cards()
+        self.print_hands()
         self.open_card()
         self.current_player_ind = self.pick_starter()
-        self.next_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
+        # self.next_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
 
         print('\n**************************** GAME STARTED ***************************')
         print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
@@ -78,7 +80,7 @@ class Game:
         current_card.print()
         if isinstance(current_card, SpecialCard):
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
-            self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
+            # self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
             if current_card.type == Special.DRAW2:
                 self.special_draw2()
             elif current_card.type == Special.REVERSE:
@@ -95,18 +97,19 @@ class Game:
             current_card = self.discard_card()
             print('Top Card:', end=' ')
             current_card.print()
-            if isinstance(current_card, SpecialCard):
-                if current_card.type == Special.DRAW2:
-                    self.special_draw2()
-                elif current_card.type == Special.REVERSE:
-                    self.special_reverse()
-                elif current_card.type == Special.SKIP:
-                    self.special_skip()
-            elif isinstance(current_card, WildCard):
-                if current_card.type == Wild.WILD:
-                    self.wild()
-                elif current_card.type == Wild.WILD_DRAW4:
-                    self.wild_draw4()
+            if not self.skipped:
+                if isinstance(current_card, SpecialCard):
+                    if current_card.type == Special.DRAW2:
+                        self.special_draw2()
+                    elif current_card.type == Special.REVERSE:
+                        self.special_reverse()
+                    elif current_card.type == Special.SKIP:
+                        self.special_skip()
+                elif isinstance(current_card, WildCard):
+                    if current_card.type == Wild.WILD:
+                        self.wild()
+                    elif current_card.type == Wild.WILD_DRAW4:
+                        self.wild_draw4()
 
             self.change_turn()
 
@@ -125,18 +128,17 @@ class Game:
 
     def get_next_player_index(self):
         if self.direction:
-            self.next_player_ind = (self.get_current_player_index() + 1) % NUM_OF_PLAYERS
+            return (self.get_current_player_index() + 1) % NUM_OF_PLAYERS
         else:
-            self.next_player_ind = (self.get_current_player_index() - 1) % NUM_OF_PLAYERS
-        return self.next_player_ind
+            return (self.get_current_player_index() - 1) % NUM_OF_PLAYERS
 
     def change_turn(self):
         if self.direction:
             self.current_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
-            self.next_player_ind = (self.next_player_ind + 1) % NUM_OF_PLAYERS
+            # self.next_player_ind = (self.next_player_ind + 1) % NUM_OF_PLAYERS
         else:
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
-            self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
+            # self.next_player_ind = (self.next_player_ind - 1) % NUM_OF_PLAYERS
         print('\n**************************** NEXT PLAYER ***************************')
 
     def special_skip(self):
@@ -169,7 +171,6 @@ class Game:
     def discard_card(self):
         current_player = self.get_current_player()
         available = current_player.find_available_cards(self.get_current_card(), self.wild_color)
-        disc_card = None
 
         if not available:
             card = self.deck.draw_card(self.draw_pile)
@@ -195,12 +196,18 @@ class Game:
             disc_card = available[card_input]
             current_player.discard_card(disc_card)
         else:
-            time.sleep(3)
+            time.sleep(1)
             print('No available again, skipping player!')
+            self.skipped = True
             return self.get_current_card()
 
         if len(current_player.cards) == 0:
             self.finished = True
 
         self.discard_pile.append(disc_card)
+        self.skipped = False
         return disc_card
+
+    def print_hands(self):
+        for p in self.players:
+            p.print_hand()

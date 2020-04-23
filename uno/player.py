@@ -18,10 +18,9 @@ class Player:
         self.cards.append(card)
 
     def print_hand(self):
-        print('Player ' + str(self.id) + ' Hand:')
+        print('\nPlayer ' + str(self.id) + ' Hand:')
         for c in self.cards:
             c.print()
-        print()
 
     def get_num_of_cards(self):
         return len(self.cards)
