@@ -80,6 +80,8 @@ class Game:
         print('\n**************************** GAME STARTED ***************************')
         print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
 
+        self.frame.highlight_player(self.get_current_player_index())
+
         current_card = self.get_current_card()
         print('Top Card:', end=' ')
         current_card.print()
