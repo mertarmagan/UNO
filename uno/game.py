@@ -1,15 +1,13 @@
-import sys
+# -*- coding: utf-8 -*-
+import logging
 import time
+from random import randint
 
-from uno.card import WildCard, SpecialCard
+from uno.card import SpecialCard, WildCard
 from uno.card_types.special import Special
 from uno.card_types.wild import Wild
 from uno.deck import Deck
-from uno.player import ComputerPlayer
-from uno.player import HumanPlayer
-from random import randint
-
-import logging
+from uno.player import ComputerPlayer, HumanPlayer
 
 NUM_OF_INIT_CARDS = 7
 NUM_OF_PLAYERS = 4
@@ -17,7 +15,7 @@ NUM_OF_PLAYERS = 4
 
 class Game:
     def __init__(self, frame, root):
-        logging.info('A game is created.')
+        logging.info("A game is created.")
         self.frame = frame  # UI thread's Frame
         self.root = root
         self.deck = Deck()  # deck of default cards
@@ -26,7 +24,9 @@ class Game:
 
         self.create_players()
 
-        self.draw_pile = self.deck.cards  # pile of cards have never played (list of cards)
+        self.draw_pile = (
+            self.deck.cards
+        )  # pile of cards have never played (list of cards)
         self.discard_pile = []  # pile of tossed cards in the middle (list of cards)
 
         self.current_player_ind = -1
@@ -38,7 +38,7 @@ class Game:
         self.finished = False
 
     def create_players(self):
-        logging.info('Players are created.')
+        logging.info("Players are created.")
         # Creating Human player which waits for input every turn
         self.human_player = HumanPlayer()
         self.players.append(self.human_player)
@@ -47,7 +47,7 @@ class Game:
             self.players.append(ComputerPlayer())
 
     def deal_cards(self):
-        logging.info('Cards are dealt.')
+        logging.info("Cards are dealt.")
         # Dealing cards for each player
         for index, p in enumerate(self.players):
             for i in range(NUM_OF_INIT_CARDS):
@@ -56,11 +56,11 @@ class Game:
             self.frame.update_num_of_cards(index, NUM_OF_INIT_CARDS)
 
     def open_card(self):
-        logging.info('First card drawn for the startup.')
+        logging.info("First card drawn for the startup.")
         current_card = self.deck.draw_card(self.draw_pile)
         # Re-drawing a card in case it is a Wild Card
         while isinstance(current_card, WildCard):
-            logging.warning('A WILD CARD drawn and re-drawing a card for the startup!')
+            logging.warning("A WILD CARD drawn and re-drawing a card for the startup!")
             self.deck.insert_random(current_card, self.draw_pile)
             current_card = self.deck.draw_card(self.draw_pile)
         self.discard_pile.append(current_card)
@@ -70,23 +70,31 @@ class Game:
         return randint(0, len(self.players) - 1)
 
     def start(self):
-        logging.info('A game is started.')
+        logging.info("A game is started.")
         self.deal_cards()
         self.print_hands()
         self.open_card()
         self.current_player_ind = self.pick_starter()
-        self.frame.show_hand(self.human_player.get_cards(),
-                             self.human_player.find_available_cards(self.get_current_card(), self.wild_color),
-                             self.get_current_player())
+        self.frame.show_hand(
+            self.human_player.get_cards(),
+            self.human_player.find_available_cards(
+                self.get_current_card(), self.wild_color
+            ),
+            self.get_current_player(),
+        )
 
-        print('\n**************************** GAME STARTED ***************************')
-        print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
+        print("\n**************************** GAME STARTED ***************************")
+        print(
+            "Player:",
+            type(self.get_current_player()).__name__,
+            "(" + str(self.get_current_player_index()) + ")",
+        )
         self.frame.highlight_player(self.get_current_player_index())
 
         current_card = self.get_current_card()
         self.frame.update_cur_card(current_card)
 
-        print('Top Card:', end=' ')
+        print("Top Card:", end=" ")
         current_card.print()
         if isinstance(current_card, SpecialCard):
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
@@ -99,18 +107,24 @@ class Game:
                 self.special_skip()
                 self.change_turn()
         else:
-            print('\n**************************** PLAYER CONT. ***************************')
+            print(f"\n{30*'*'} PLAYER CONT. {30*'*'}")
 
         while not self.finished:
-            print('Player:', type(self.get_current_player()).__name__, '(' + str(self.get_current_player_index()) + ')')
+            print(
+                "Player:",
+                type(self.get_current_player()).__name__,
+                "(" + str(self.get_current_player_index()) + ")",
+            )
             self.frame.highlight_player(self.get_current_player_index())
             print("Num. of cards:", len(self.get_current_player().cards))
             current_card = self.discard_card()
 
-            self.frame.update_num_of_cards(self.get_current_player_index(), len(self.get_current_player().cards))
+            self.frame.update_num_of_cards(
+                self.get_current_player_index(), len(self.get_current_player().cards)
+            )
 
             self.frame.update_cur_card(current_card)
-            print('Top Card:', end=' ')
+            print("Top Card:", end=" ")
             current_card.print()
             if not self.skipped:
                 if isinstance(current_card, SpecialCard):
@@ -153,9 +167,17 @@ class Game:
             self.current_player_ind = (self.current_player_ind + 1) % NUM_OF_PLAYERS
         else:
             self.current_player_ind = (self.current_player_ind - 1) % NUM_OF_PLAYERS
-        self.frame.update_num_of_cards(self.get_current_player_index(), len(self.get_current_player().cards))
-        self.frame.show_hand(self.human_player.get_cards(), self.human_player.find_available_cards(self.get_current_card(), self.wild_color), self.get_current_player())
-        print('\n**************************** NEXT PLAYER ***************************')
+        self.frame.update_num_of_cards(
+            self.get_current_player_index(), len(self.get_current_player().cards)
+        )
+        self.frame.show_hand(
+            self.human_player.get_cards(),
+            self.human_player.find_available_cards(
+                self.get_current_card(), self.wild_color
+            ),
+            self.get_current_player(),
+        )
+        print("\n**************************** NEXT PLAYER ***************************")
 
     def special_skip(self):
         self.change_turn()
@@ -186,21 +208,31 @@ class Game:
 
     def discard_card(self):
         current_player = self.get_current_player()
-        available = current_player.find_available_cards(self.get_current_card(), self.wild_color)
+        available = current_player.find_available_cards(
+            self.get_current_card(), self.wild_color
+        )
 
         if not available:
             card = self.deck.draw_card(self.draw_pile)
             current_player.draw_card(card)
-            self.frame.show_hand(self.human_player.get_cards(), self.human_player.find_available_cards(self.get_current_card(), self.wild_color), self.get_current_player())
-            print('No available, drawing a card: ', end='')
+            self.frame.show_hand(
+                self.human_player.get_cards(),
+                self.human_player.find_available_cards(
+                    self.get_current_card(), self.wild_color
+                ),
+                self.get_current_player(),
+            )
+            print("No available, drawing a card: ", end="")
             card.print()
 
-        available = current_player.find_available_cards(self.get_current_card(), self.wild_color)
+        available = current_player.find_available_cards(
+            self.get_current_card(), self.wild_color
+        )
 
         if available:
-            print('Available Cards:')
+            print("Available Cards:")
             for index in range(len(available)):
-                print('   ' + str(index) + '-', end='')
+                print("   " + str(index) + "-", end="")
                 available[index].print()
 
             if isinstance(current_player, HumanPlayer):
@@ -215,7 +247,7 @@ class Game:
             current_player.discard_card(disc_card)
         else:
             time.sleep(1)
-            print('No available again, skipping player!')
+            print("No available again, skipping player!")
             self.skipped = True
             return self.get_current_card()
 

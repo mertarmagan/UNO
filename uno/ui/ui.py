@@ -1,7 +1,6 @@
-import uno.ui.uno_frame as uf
+# -*- coding: utf-8 -*-
 
 
 class UI:
     def __init__(self):
         pass
-

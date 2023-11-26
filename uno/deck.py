@@ -1,14 +1,14 @@
-from uno.card import NumberCard
-from uno.card import SpecialCard
-from uno.card import WildCard
-from uno.card_types.color import Color
-from uno.card_types.special import Special
-from uno.card_types.number import Number
-from uno.card_types.wild import Wild
+# -*- coding: utf-8 -*-
 from random import randint
 
+from uno.card import NumberCard, SpecialCard, WildCard
+from uno.card_types.color import Color
+from uno.card_types.number import Number
+from uno.card_types.special import Special
+from uno.card_types.wild import Wild
 
-class Deck():
+
+class Deck:
     def __init__(self):
         self.cards = []
         self.create_cards()

@@ -1,9 +1,11 @@
-from uno.ui.uno_frame import UI
-from uno.game import Game
-import threading
+# -*- coding: utf-8 -*-
 import logging
+
+from uno.game import Game
+from uno.ui.uno_frame import UI
+
 # Configuring the logging function to display proper messages in console
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
 
 def game_thread(frame, root):
@@ -16,10 +18,4 @@ def ui_thread(ui):
 
 
 def run():
-    # g = threading.Thread(target=game_thread, args=[])
-    ui = UI(game_thread)
-    # u = threading.Thread(target=ui_thread, args=[ui])
-    # u.start()
-    # game = Game(ui.frame)
-    # g.start()
-    # g.join()
+    UI(game_thread)

@@ -1,10 +1,11 @@
-import sys
+# -*- coding: utf-8 -*-
+import logging
 from random import randint
 
 from uno.card import ColorCard, NumberCard, SpecialCard, WildCard
 from uno.card_types.color import Color
 from uno.card_types.wild import Wild
-import logging
+
 
 class Player:
     _id = 0
@@ -18,7 +19,7 @@ class Player:
         self.cards.append(card)
 
     def print_hand(self):
-        print('\nPlayer ' + str(self.id) + ' Hand:')
+        print("\nPlayer " + str(self.id) + " Hand:")
         for c in self.cards:
             c.print()
 
@@ -64,7 +65,7 @@ class Player:
         color_input = None
         index = 0
         for c in Color:
-            print('   ' + str(index) + '-', end='')
+            print("   " + str(index) + "-", end="")
             print(Color(c))
             index += 1
 
@@ -89,13 +90,14 @@ class Player:
         elif color_input == 3:
             color = Color.YELLOW
         else:
-            logging.warning('Invalid color input!')
+            logging.warning("Invalid color input!")
 
-        print('NEW COLOR PICKED:', color)
+        print("NEW COLOR PICKED:", color)
         return color
 
     def discard_card(self, card):
         self.cards.remove(card)
+
 
 class HumanPlayer(Player):
     def __init__(self):
@@ -105,4 +107,3 @@ class HumanPlayer(Player):
 class ComputerPlayer(Player):
     def __init__(self):
         super().__init__()
-
