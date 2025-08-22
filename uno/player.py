@@ -73,10 +73,9 @@ class Player:
             print(frame.color_input)
             frame.color_event.wait()
             color_input = frame.color_input
-            print("GELDİ")
-            """color_input = int(sys.stdin.readline())
-            while color_input not in range(0, 4):
-                color_input = int(sys.stdin.readline())"""
+            # color_input = int(sys.stdin.readline())
+            # while color_input not in range(0, 4):
+            #     color_input = int(sys.stdin.readline())
 
         elif isinstance(self, ComputerPlayer):
             color_input = randint(0, 3)
@@ -100,10 +99,8 @@ class Player:
 
 
 class HumanPlayer(Player):
-    def __init__(self):
-        super().__init__()
+    pass
 
 
 class ComputerPlayer(Player):
-    def __init__(self):
-        super().__init__()
+    pass

@@ -206,7 +206,7 @@ class UnoFrame(Frame):
 
         for index, c in enumerate(self.current_aval):
             if c.get_image_name() == card_name:
-                if card_name == "wild" or card_name == "wild_draw4":
+                if card_name in {"wild", "wild_draw4"}:
                     self.toggle_color_buttons(True)
                 else:
                     self.toggle_color_buttons(False)
